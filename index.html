@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+    <title>Canvas Clock</title>
+  </head>
+  <body>
+    <canvas id="clock" width="800" height="800"></canvas>
+    <script type="text/javascript">
+      var canvas = document.getElementById('clock');
+      var context = canvas.getContext("2d");
+
+      function drawUpdatedClock()   {
+        var date = new Date();
+        var currSecSinceMidnight = date.getSeconds() + (60 * date.getMinutes()) + (60 * 60 * date.getHours());
+        var currSecSinceFullHour = date.getSeconds() + (60 * date.getMinutes());
+        var currSec = date.getSeconds();
+
+        context.clearRect(0,0,canvas.width,canvas.height);
+        //the main black circle
+        context.beginPath();
+        context.fillStyle = 'black';
+        context.arc(400,400,400,0,2*Math.PI);
+        context.fill();
+
+        //the numbers
+        /*
+          Formulas for hour-coordinates:
+          x = cos((h-3) * 30) *350 + 400
+          y = sin((h-3) * 30) * 350 +400
+         */
+        context.fillStyle = "white";
+        context.font = "30px Arial";
+        context.textAlign="center";
+        context.fillText("1",575,97);
+        context.fillText("2",703,225);
+        context.fillText("3",750,400);
+        context.fillText("4",703,575);
+        context.fillText("5",575,703);
+        context.fillText("6",400,750);
+        context.fillText("7",225,703);
+        context.fillText("8",97,575);
+        context.fillText("9",50,400);
+        context.fillText("10",97,225);
+        context.fillText("11",225,97);
+        context.fillText("12",400,50);
+
+        //draw the white circle in the middle of the big black one
+        context.beginPath();
+        context.fillStyle = "white";
+        context.arc(400,400,20,0,2*Math.PI);
+        context.fill();
+
+        //draw the hour line
+        var currh =  currSecSinceMidnight / 3600;
+        if(!(currh <= 12))  {
+          currh -= 12;
+        }
+        context.beginPath();
+        context.strokeStyle = 'white';
+        context.lineWidth = 10;
+        context.moveTo(400,400);
+        var hourX = Math.cos((currh-3) * 30 * (Math.PI / 180)) * 220 + 400;
+        var hourY = Math.sin((currh-3) * 30 * (Math.PI / 180)) * 220 + 400;
+        context.lineTo(hourX, hourY);
+        context.stroke();
+
+        //draw the minute line
+        var currmin =  currSecSinceFullHour / 60;
+
+        context.beginPath();
+        context.strokeStyle = 'white';
+        context.lineWidth = 6;
+        context.moveTo(400,400);
+        var minuteX = Math.cos((currmin-15) * 6 * (Math.PI / 180)) * 290 + 400;
+        var minuteY = Math.sin((currmin-15) * 6 * (Math.PI / 180)) * 290 + 400;
+        context.lineTo(minuteX, minuteY);
+        context.stroke();
+
+        //draw the minute line
+        var currsec =  date.getSeconds();
+
+        context.beginPath();
+        context.strokeStyle = 'white';
+        context.lineWidth = 3;
+        context.moveTo(400,400);
+        var secondX = Math.cos((currsec-15) * 6 * (Math.PI / 180)) * 360 + 400;
+        var secondY = Math.sin((currsec-15) * 6 * (Math.PI / 180)) * 360 + 400;
+        context.lineTo(secondX, secondY);
+        context.stroke();
+
+    }
+      drawUpdatedClock();
+      setInterval(function () {drawUpdatedClock();}, 1000);
+    </script>
+  </body>
+</html>
